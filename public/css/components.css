@@ -1,0 +1,666 @@
+/* Leads Table */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.leads-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.leads-table th {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 14px 20px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-subtle);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.leads-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.leads-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.lead-profile-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lead-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  border: 1px solid var(--border-subtle);
+}
+
+.lead-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lead-phone {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: monospace;
+}
+
+/* Status Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.badge-genuine {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+}
+
+.badge-nurture {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.badge-explorer {
+  background: rgba(100, 116, 139, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+}
+
+.badge-dispatched {
+  background: rgba(99, 102, 241, 0.2);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.4);
+}
+
+/* Pugh Score Progress Meter */
+.pugh-meter-cell {
+  min-width: 140px;
+}
+
+.pugh-meter-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: 0.75rem;
+}
+
+.pugh-score-val {
+  font-weight: 700;
+  font-family: monospace;
+}
+
+.pugh-progress-track {
+  height: 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  position: relative;
+}
+
+.pugh-progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.fill-genuine {
+  background: linear-gradient(90deg, #10b981, #34d399);
+  box-shadow: 0 0 8px #10b981;
+}
+
+.fill-nurture {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.fill-explorer {
+  background: linear-gradient(90deg, #64748b, #94a3b8);
+}
+
+/* Criteria Snippet */
+.criteria-pill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 280px;
+}
+
+.criterion-tag {
+  font-size: 0.7rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+/* ==============================================================================
+   WHATSAPP SIMULATOR PHONE MOCK
+   ============================================================================== */
+.simulator-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sim-phone-wrapper {
+  background: #0f141f;
+  border: 4px solid #2d3748;
+  border-radius: 36px;
+  padding: 12px;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(99, 102, 241, 0.15);
+  position: relative;
+}
+
+.sim-phone-speaker {
+  width: 60px;
+  height: 4px;
+  background: #4a5568;
+  border-radius: 3px;
+  margin: 0 auto 10px auto;
+}
+
+.sim-phone-screen {
+  background: #0b141a;
+  border-radius: 26px;
+  overflow: hidden;
+  height: 620px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-image: 
+    radial-gradient(circle at center, rgba(17, 27, 33, 0.95) 0%, #0b141a 100%),
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.015) 0, rgba(255, 255, 255, 0.015) 1px, transparent 0, transparent 50px);
+}
+
+.wa-header {
+  background: #202c33;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.wa-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wa-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #00a884;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.wa-name-info {
+  line-height: 1.2;
+}
+
+.wa-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #e9edef;
+}
+
+.wa-status {
+  font-size: 0.7rem;
+  color: #00a884;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.wa-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #00a884;
+}
+
+/* Chat Area */
+.wa-chat-body {
+  flex: 1;
+  padding: 14px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-behavior: smooth;
+}
+
+.wa-bubble {
+  max-width: 82%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  position: relative;
+  word-break: break-word;
+  animation: bubble-fade 0.25s ease-out;
+}
+
+@keyframes bubble-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.wa-bubble.bot {
+  align-self: flex-start;
+  background: #202c33;
+  color: #e9edef;
+  border-top-left-radius: 0px;
+}
+
+.wa-bubble.user {
+  align-self: flex-end;
+  background: #005c4b;
+  color: #e9edef;
+  border-top-right-radius: 0px;
+}
+
+.wa-bubble-time {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 4px;
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.wa-ticks {
+  color: #53bdeb; /* Double blue ticks */
+  font-size: 0.75rem;
+}
+
+/* Interactive Scenario Chips */
+.quick-scenarios {
+  padding: 8px 12px;
+  background: rgba(17, 27, 33, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.scenario-chip {
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 12px;
+  background: #2a3942;
+  color: #d1d7db;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.scenario-chip:hover {
+  background: #374751;
+  color: #ffffff;
+}
+
+.scenario-chip.genuine-preset {
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #34d399;
+}
+
+.scenario-chip.explorer-preset {
+  border-color: rgba(100, 116, 139, 0.4);
+  color: #94a3b8;
+}
+
+/* Chat Input Bar */
+.wa-input-bar {
+  padding: 10px 12px;
+  background: #202c33;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wa-input {
+  flex: 1;
+  background: #2a3942;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: #e9edef;
+  font-size: 0.82rem;
+  outline: none;
+  font-family: inherit;
+}
+
+.wa-send-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #00a884;
+  border: none;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.wa-send-btn:active {
+  transform: scale(0.92);
+}
+
+/* Live Simulator Pugh Score Bar */
+.sim-live-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+}
+
+.sim-live-score {
+  font-weight: 800;
+  font-size: 1.1rem;
+  font-family: monospace;
+}
+
+/* ==============================================================================
+   PUGH MATRIX MODAL INSPECTOR (Native HTML5 <dialog>)
+   ============================================================================== */
+dialog.pugh-dialog {
+  margin: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: #0d121d;
+  color: var(--text-primary);
+  width: 92%;
+  max-width: 900px;
+  max-height: 90vh;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.8), 0 0 50px rgba(99, 102, 241, 0.2);
+  padding: 0;
+  overflow: hidden;
+}
+
+dialog.pugh-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.dialog-header {
+  padding: 20px 24px;
+  background: #131a29;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dialog-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dialog-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: color 0.15s ease;
+}
+
+.dialog-close-btn:hover {
+  color: #ffffff;
+}
+
+.dialog-body {
+  padding: 24px;
+  overflow-y: auto;
+  max-height: calc(90vh - 140px);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Pugh Score Hero Card in Modal */
+.pugh-hero-card {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  .pugh-hero-card {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+}
+
+.pugh-radial-gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.gauge-svg {
+  width: 140px;
+  height: 140px;
+  transform: rotate(-90deg);
+}
+
+.gauge-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 12;
+}
+
+.gauge-fill {
+  fill: none;
+  stroke-width: 12;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s ease;
+}
+
+.gauge-center-text {
+  margin-top: -95px;
+  margin-bottom: 50px;
+  text-align: center;
+}
+
+.gauge-score-number {
+  font-size: 1.75rem;
+  font-weight: 800;
+  font-family: monospace;
+}
+
+.gauge-delta-number {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.pugh-hero-info h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.pugh-hero-info p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+/* Criteria Cards in Modal */
+.criteria-table-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.criterion-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.2s ease;
+}
+
+.criterion-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.crit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.crit-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crit-score-badge {
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  font-family: monospace;
+}
+
+.crit-score-pos {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.crit-score-zero {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.crit-score-neg {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.crit-baseline {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.crit-quote {
+  font-size: 0.8rem;
+  font-style: italic;
+  padding: 8px 12px;
+  border-left: 3px solid var(--accent-primary);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 0 6px 6px 0;
+  color: #cbd5e1;
+}
+
+.crit-reasoning {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+/* Toast Alerts */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.toast {
+  background: #111827;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: #ffffff;
+  animation: slide-toast 0.3s ease-out;
+  min-width: 320px;
+}
+
+.toast.toast-sales {
+  border-left: 4px solid var(--color-genuine);
+  background: linear-gradient(135deg, #0b1e16 0%, #111827 100%);
+}
+
+@keyframes slide-toast {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
