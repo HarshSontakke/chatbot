@@ -30,6 +30,29 @@ class DashboardApp {
       });
     }
 
+    // Theme Toggle Handler
+    const themeBtn = document.getElementById("themeToggleBtn");
+    if (themeBtn) {
+      themeBtn.addEventListener("click", () => {
+        const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+        const nextTheme = currentTheme === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", nextTheme);
+        try {
+          localStorage.setItem("haven_theme", nextTheme);
+        } catch (err) {}
+        this.showToast(`Switched to <strong>${nextTheme === "dark" ? "Dark" : "Light"}</strong> theme.`);
+      });
+    }
+
+    // System theme sync if user hasn't explicitly set a preference
+    if (window.matchMedia) {
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+        if (!localStorage.getItem("haven_theme")) {
+          document.documentElement.setAttribute("data-theme", e.matches ? "dark" : "light");
+        }
+      });
+    }
+
     // Filter Tabs
     document.querySelectorAll(".tab-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -96,6 +119,14 @@ class DashboardApp {
             `🚀 <strong>SALES HANDOVER DISPATCHED:</strong> ${data.lead.name} (${data.lead.phone}) is ready for VIP tour!`,
             "toast-sales"
           );
+        } else if (data.type === "LEAD_DELETED") {
+          const cleanQuery = String(data.phone || "").replace(/\D/g, "");
+          this.leads = this.leads.filter((l) => {
+            const clean = String(l.phone || "").replace(/\D/g, "");
+            return clean !== cleanQuery && !clean.endsWith(cleanQuery) && !cleanQuery.endsWith(clean);
+          });
+          this.updateKPIs();
+          this.renderLeadsTable();
         }
       } catch (err) {
         // Heartbeat or unparseable event
@@ -208,8 +239,8 @@ class DashboardApp {
 
         const evalObj = lead.evaluations || {};
         const keyQuotes = [
-          evalObj.budget_readiness?.quote ? `💰 Budget: ${evalObj.budget_readiness.quote.slice(0, 25)}...` : null,
-          evalObj.timeline_urgency?.quote ? `⏱️ Timeline: ${evalObj.timeline_urgency.quote.slice(0, 25)}...` : null
+          evalObj.budget_readiness?.quote ? `Budget: ${evalObj.budget_readiness.quote.slice(0, 28)}...` : null,
+          evalObj.timeline_urgency?.quote ? `Timeline: ${evalObj.timeline_urgency.quote.slice(0, 28)}...` : null
         ].filter(Boolean);
 
         return `
@@ -219,8 +250,8 @@ class DashboardApp {
               <div class="lead-avatar">${initials}</div>
               <div>
                 <div class="lead-name">
-                  ${lead.name}
-                  ${lead.salesHandoverSent ? `<span title="Dispatched to Sales" style="font-size: 0.8rem;">🚀</span>` : ""}
+                  <span>${lead.name}</span>
+                  ${lead.salesHandoverSent ? `<span class="badge badge-dispatched" style="font-size: 0.65rem; padding: 1px 6px;">Dispatched</span>` : ""}
                 </div>
                 <div class="lead-phone">${lead.phone} • ${lead.source || "WhatsApp"}</div>
               </div>
@@ -229,7 +260,7 @@ class DashboardApp {
           <td>
             <div class="pugh-meter-cell">
               <div class="pugh-meter-header">
-                <span>Pugh Score</span>
+                <span style="color: var(--text-muted);">Match</span>
                 <span class="pugh-score-val">${score}%</span>
               </div>
               <div class="pugh-progress-track">
@@ -244,8 +275,8 @@ class DashboardApp {
             <div class="criteria-pill-list">
               ${
                 keyQuotes.length > 0
-                  ? keyQuotes.map((q) => `<span class="criterion-tag">${q}</span>`).join("")
-                  : `<span class="criterion-tag" style="color: var(--text-muted);">Assessing parameters...</span>`
+                  ? keyQuotes.map((q) => `<span class="criterion-tag" title="${q}">${q}</span>`).join("")
+                  : `<span class="criterion-tag" style="color: var(--text-muted);">Assessing criteria...</span>`
               }
             </div>
           </td>
@@ -254,16 +285,21 @@ class DashboardApp {
               lead.salesHandoverSent
                 ? `<span class="badge badge-dispatched">Sent to Sales</span>`
                 : score >= 70
-                ? `<button class="btn btn-emerald btn-sm btn-action-dispatch" data-phone="${encodeURIComponent(lead.phone)}">
-                    🚀 Dispatch Now
+                ? `<button class="btn btn-primary btn-sm btn-action-dispatch" data-phone="${encodeURIComponent(lead.phone)}">
+                    Dispatch
                    </button>`
-                : `<span style="font-size: 0.75rem; color: var(--text-muted);">In Qualification</span>`
+                : `<span style="font-size: 0.74rem; color: var(--text-muted);">In Qualification</span>`
             }
           </td>
-          <td>
-            <button class="btn btn-secondary btn-sm btn-inspect-pugh" data-phone="${encodeURIComponent(lead.phone)}">
-              🔍 Inspect Pugh Score
-            </button>
+          <td style="text-align: right;">
+            <div style="display: inline-flex; gap: 6px; align-items: center; justify-content: flex-end;">
+              <button class="btn btn-secondary btn-sm btn-inspect-pugh" data-phone="${encodeURIComponent(lead.phone)}">
+                Inspect
+              </button>
+              <button class="btn btn-danger btn-sm btn-delete-lead" data-phone="${encodeURIComponent(lead.phone)}" title="Delete Lead">
+                Delete
+              </button>
+            </div>
           </td>
         </tr>
       `;
@@ -277,6 +313,29 @@ class DashboardApp {
         const targetLead = this.leads.find((l) => l.phone === phone);
         if (targetLead && this.dialogEl) {
           openPughModal(targetLead, this.dialogEl);
+        }
+      });
+    });
+
+    // Attach 1-click delete handlers
+    this.leadsTableBody.querySelectorAll(".btn-delete-lead").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const phone = decodeURIComponent(btn.getAttribute("data-phone"));
+        if (!confirm(`Are you sure you want to delete lead ${phone}?`)) return;
+        btn.disabled = true;
+        try {
+          const res = await fetch(`/api/leads/${encodeURIComponent(phone)}`, { method: "DELETE" });
+          const data = await res.json();
+          if (data.success) {
+            this.showToast(`🗑️ Lead ${phone} deleted successfully.`);
+            this.fetchLeads();
+          } else {
+            alert("Delete failed: " + (data.error || "Unknown error"));
+            btn.disabled = false;
+          }
+        } catch (err) {
+          alert("Error: " + err.message);
+          btn.disabled = false;
         }
       });
     });
@@ -350,6 +409,10 @@ class DashboardApp {
 }
 
 // Initialize on DOM Ready
-document.addEventListener("DOMContentLoaded", () => {
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    window.app = new DashboardApp();
+  });
+} else {
   window.app = new DashboardApp();
-});
+}

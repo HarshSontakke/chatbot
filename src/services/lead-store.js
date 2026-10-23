@@ -69,11 +69,13 @@ class LeadStore {
         recommendedAction: "Confirm Saturday 11 AM VIP tour in Goregaon East and send floor plans"
       },
       chatHistory: [
-        { role: "user", content: "Hi, I am looking for a 3-BHK in Goregaon East Mumbai.", timestamp: "11:15 AM" },
-        { role: "assistant", content: "Welcome Rohan & Priya! Which configuration and budget bracket suits your family best?", timestamp: "11:15 AM" },
-        { role: "user", content: "3 BHK around ₹1.85 Cr. We have sanction from HDFC Bank.", timestamp: "11:16 AM" },
-        { role: "assistant", content: "How soon are you planning to take possession?", timestamp: "11:17 AM" },
-        { role: "user", content: "Within 45 days, before school starts.", timestamp: "11:18 AM" }
+        { role: "user", content: "Hi, I am looking for a 3-BHK luxury apartment in Goregaon East near Western Express Highway.", timestamp: "11:15 AM" },
+        { role: "assistant", content: "Welcome Rohan & Priya! 🏰 Which configuration and budget bracket suits your family best?", timestamp: "11:15 AM" },
+        { role: "user", content: "3 BHK around ₹1.85 Cr. We have ₹1.85 Cr pre-approved with HDFC Bank, ready with liquid down payment today.", timestamp: "11:16 AM" },
+        { role: "assistant", content: "That is excellent financial readiness! How soon are you planning to close and move in?", timestamp: "11:17 AM" },
+        { role: "user", content: "Need to close and move in within 45 days before new school session begins in June. Also, quick question—how is the monsoon traffic around Goregaon East or what is the weather like today?", timestamp: "11:18 AM" },
+        { role: "assistant", content: "The Western Express Highway flyovers and Metro Line 7 ensure smooth commutes even during monsoon, and today the weather in Mumbai is pleasant around 30°C! 🌤️ Who will be the primary signers on the property deed, and would you like to schedule a private tour this Saturday?", timestamp: "11:19 AM" },
+        { role: "user", content: "My wife and I will be deciding together, we both reviewed the locality already. Please confirm Saturday 11 AM VIP tour in Goregaon East!", timestamp: "11:20 AM" }
       ]
     };
 
@@ -293,68 +295,11 @@ class LeadStore {
       salesHandoverSent: false,
       salesHandoverDetails: null,
       chatHistory: [
-        { role: "user", content: "Hey do you have luxury penthouses?", timestamp: "10:45 AM" },
-        { role: "assistant", content: "Hello Arjun! Are you exploring for family living or property investment?", timestamp: "10:45 AM" },
+        { role: "user", content: "Hey can you tell me a funny joke about coding? Also what is the weather in Mumbai today?", timestamp: "10:44 AM" },
+        { role: "assistant", content: "Haha! Why do programmers prefer dark mode? Because light attracts bugs! 🐛 The weather in Mumbai is sunny around 31°C today. Welcome to HavenCraft Realty! Are you exploring homes for living or investment?", timestamp: "10:45 AM" },
         { role: "user", content: "Just checking how expensive real estate is haha. Just show me the biggest penthouses anywhere in Mumbai.", timestamp: "10:46 AM" },
-        { role: "assistant", content: "What is your comfortable budget bracket and purchase timeline?", timestamp: "10:47 AM" },
-        { role: "user", content: "No budget right now, just dreaming, maybe in a couple years. No don't call me, just send pictures on WhatsApp.", timestamp: "10:48 AM" }
-      ]
-    };
-
-    // 6. Inbound Verified User: Harshvardhan Joshi
-    const harshEval = {
-      budget_readiness: {
-        score: 2,
-        quote: "Budget ₹1.75 Cr arranged with Axis Bank",
-        reasoning: "Financing in place"
-      },
-      timeline_urgency: {
-        score: 2,
-        quote: "Immediate 30-60 days moving horizon",
-        reasoning: "Ready to move"
-      },
-      requirement_clarity: {
-        score: 2,
-        quote: "3 BHK in Mumbai western suburbs",
-        reasoning: "Verified specifications"
-      },
-      decision_authority: {
-        score: 2,
-        quote: "Primary buyer",
-        reasoning: "Direct mandate"
-      },
-      engagement_commitment: {
-        score: 1,
-        quote: "Requested floor plans and site visit",
-        reasoning: "Active consultation"
-      }
-    };
-    const harshPugh = evaluatePughMatrix(harshEval, 70);
-
-    const lead6 = {
-      id: "lead_inbound_106",
-      phone: "919136832469",
-      name: "Harshvardhan Joshi",
-      city: "mumbai",
-      configuration: "3 BHK",
-      source: "WhatsApp Meta Cloud API",
-      status: "GENUINE_BUYER",
-      isGenuine: true,
-      pughScore: harshPugh.normalizedScore,
-      pughResult: harshPugh,
-      evaluations: harshEval,
-      turnCount: 4,
-      lastSeen: new Date().toISOString(),
-      salesHandoverSent: true,
-      salesHandoverDetails: {
-        dispatchedAt: new Date().toISOString(),
-        assignedSpecialist: "Rajesh Sharma (Senior Property Specialist)",
-        priority: "HIGH (Score: 90%)",
-        recommendedAction: "Deliver 3-BHK luxury floor plans and schedule site tour"
-      },
-      chatHistory: [
-        { role: "user", content: "Hi, looking for 3 BHK properties in Mumbai.", timestamp: "03:40 PM" },
-        { role: "assistant", content: "Welcome Harshvardhan! Let's find your ideal home in Mumbai.", timestamp: "03:40 PM" }
+        { role: "assistant", content: "Penthouses in South Mumbai range upwards of ₹15–25 Crore. What is your comfortable budget bracket and purchase timeline?", timestamp: "10:47 AM" },
+        { role: "user", content: "No budget right now, just dreaming, maybe in a couple years or after college. No don't call me, just send pictures on WhatsApp.", timestamp: "10:48 AM" }
       ]
     };
 
@@ -363,10 +308,9 @@ class LeadStore {
     this.leads.set(lead3.phone, lead3);
     this.leads.set(lead4.phone, lead4);
     this.leads.set(lead5.phone, lead5);
-    this.leads.set(lead6.phone, lead6);
 
     // Populate Sales Dispatches
-    [lead1, lead2, lead3, lead6].forEach((lead) => {
+    [lead1, lead2, lead3].forEach((lead) => {
       this.salesDispatches.push({
         leadId: lead.id,
         leadName: lead.name,

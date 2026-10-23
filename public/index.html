@@ -3,56 +3,100 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HavenCraft Realty • Real Estate WhatsApp NLP Chatbot & Pugh Matrix Lead Intelligence</title>
-  <meta name="description" content="AI-powered WhatsApp NLP chatbot for real estate that uses the Pugh Decision Matrix to qualify genuine high-intent buyers vs casual window shoppers in real time.">
-  
-  <!-- Modern Typography from Google Fonts -->
+  <meta name="color-scheme" content="light dark">
+  <title>HavenCraft Realty • WhatsApp NLP & Pugh Matrix Lead Intelligence</title>
+  <meta name="description" content="Enterprise WhatsApp NLP chatbot and Pugh Decision Matrix lead qualification dashboard for luxury real estate.">
+
+  <!-- Anti-FOUC script for instant theme initialization -->
+  <script>
+    (function() {
+      try {
+        const saved = localStorage.getItem("haven_theme");
+        if (saved === "dark" || saved === "light") {
+          document.documentElement.setAttribute("data-theme", saved);
+        } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
   <div class="app-container">
-    <!-- Top Navigation -->
+    <!-- Top Navigation Bar -->
     <header class="top-nav">
       <div class="brand-section">
-        <div class="brand-logo-badge" id="brandLogo">🏡</div>
+        <div class="brand-logo-badge" id="brandLogo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+        </div>
         <div class="brand-title-wrap">
-          <h1>HavenCraft Luxury Realty</h1>
+          <div class="brand-name-row">
+            <h1>HavenCraft Realty</h1>
+            <span class="badge-enterprise">Enterprise</span>
+          </div>
           <div class="brand-subtitle">
-            <span>WhatsApp NLP Intelligence • Pugh Matrix Lead Qualifier</span>
-            <span class="live-indicator">
-              <span class="live-dot"></span>
-              Live Sync
-            </span>
+            <span>WhatsApp NLP Intelligence</span>
+            <span class="divider-dot">•</span>
+            <span>Pugh Matrix Qualification</span>
           </div>
         </div>
       </div>
 
+      <!-- Cloud API Status -->
       <div class="meta-status-bar">
-        <div class="meta-chip" title="Meta Cloud API Phone Number ID">
-          <span>Phone ID:</span>
-          <strong>142986888904116</strong>
-        </div>
-        <div class="meta-chip" title="Meta WhatsApp Business Account ID">
-          <span>WABA ID:</span>
-          <strong>166900666499914</strong>
-        </div>
-        <div class="meta-chip" style="border-color: rgba(16, 185, 129, 0.35);" title="Pugh Qualification Cutoff">
-          <span>Cutoff:</span>
-          <strong style="color: #34d399;">≥ 70% (Genuine)</strong>
+        <div class="meta-chip live" title="Meta WhatsApp Cloud API Live Webhook">
+          <span class="pulse-dot"></span>
+          <span>API Connected</span>
         </div>
       </div>
 
+      <!-- Action Controls & Theme Toggle -->
       <div class="nav-actions">
-        <button class="btn btn-secondary" id="btnExportLeads">
-          <span>📥</span> Export CSV
+        <!-- Light / Dark Theme Switcher Button -->
+        <button class="btn-theme-toggle" id="themeToggleBtn" type="button" aria-label="Toggle color theme" title="Toggle Light / Dark mode">
+          <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
         </button>
-        <button class="btn btn-primary" id="btnQuickTest" onclick="document.getElementById('simInput').focus()">
-          <span>📱</span> Test Simulator
+
+        <button class="btn btn-secondary" id="btnExportLeads" type="button">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Export CSV</span>
+        </button>
+
+        <button class="btn btn-primary" id="btnQuickTest" type="button" onclick="document.getElementById('simInput')?.focus()">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span>Test Chat</span>
         </button>
       </div>
     </header>
@@ -64,74 +108,103 @@
         <article class="kpi-card" id="cardTotalLeads">
           <div class="kpi-header">
             <span class="kpi-title">Total Inbound Leads</span>
-            <span class="kpi-icon">👥</span>
+            <div class="kpi-icon-wrap icon-neutral">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
           </div>
-          <div class="kpi-value" id="kpiTotalLeads">2</div>
-          <div class="kpi-sub">Processed via Meta WhatsApp & Simulator</div>
+          <div class="kpi-value" id="kpiTotalLeads">5</div>
+          <div class="kpi-sub">Processed via Meta WhatsApp Cloud API</div>
         </article>
 
         <article class="kpi-card genuine" id="cardGenuine">
           <div class="kpi-header">
             <span class="kpi-title">Genuine Buyers</span>
-            <span class="kpi-icon">🎯</span>
+            <div class="kpi-icon-wrap icon-genuine">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
           </div>
-          <div class="kpi-value" id="kpiGenuine">1</div>
-          <div class="kpi-sub">Pugh Score ≥ 70% (Immediate Buying Intent)</div>
+          <div class="kpi-value text-genuine" id="kpiGenuine">3</div>
+          <div class="kpi-sub">Pugh Score ≥ 70% (High-intent ready to buy)</div>
+        </article>
+
+        <article class="kpi-card nurture" id="cardNurture">
+          <div class="kpi-header">
+            <span class="kpi-title">Nurture Prospects</span>
+            <div class="kpi-icon-wrap icon-nurture">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-value text-nurture" id="kpiAvgScore">74%</div>
+          <div class="kpi-sub">Avg. Pugh Matrix Qualification Benchmark</div>
         </article>
 
         <article class="kpi-card explorer" id="cardExplorers">
           <div class="kpi-header">
             <span class="kpi-title">Casual Explorers</span>
-            <span class="kpi-icon">👀</span>
+            <div class="kpi-icon-wrap icon-explorer">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+              </svg>
+            </div>
           </div>
-          <div class="kpi-value" id="kpiExplorers">1</div>
-          <div class="kpi-sub">Pugh Score &lt; 45% (Browsing / No Budget)</div>
-        </article>
-
-        <article class="kpi-card" id="cardAvgScore">
-          <div class="kpi-header">
-            <span class="kpi-title">Avg. Pugh Score</span>
-            <span class="kpi-icon">📈</span>
-          </div>
-          <div class="kpi-value" id="kpiAvgScore">55%</div>
-          <div class="kpi-sub">Normalized multi-criteria benchmark</div>
+          <div class="kpi-value text-explorer" id="kpiExplorers">1</div>
+          <div class="kpi-sub">Score &lt; 45% (Unbudgeted / Window shoppers)</div>
         </article>
 
         <article class="kpi-card sales" id="cardSales">
           <div class="kpi-header">
             <span class="kpi-title">Dispatched to Sales</span>
-            <span class="kpi-icon">🚀</span>
+            <div class="kpi-icon-wrap icon-sales">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </div>
           </div>
-          <div class="kpi-value" id="kpiSales">1</div>
-          <div class="kpi-sub">Dossiers handed over to Acquisitions Team</div>
+          <div class="kpi-value text-sales" id="kpiSales">3</div>
+          <div class="kpi-sub">Qualified dossiers sent to Acquisition Team</div>
         </article>
       </section>
 
-      <!-- Main Two-Column Layout: Pipeline Table + Interactive WhatsApp Phone Simulator -->
+      <!-- Main Two-Column Layout: Pipeline Data Table + CRM Conversation Console -->
       <div class="content-grid">
-        <!-- Left: Live Lead Pipeline -->
+        <!-- Left: Live Lead Pipeline & Pugh Qualification -->
         <section class="panel-card" aria-label="Lead Pipeline and Pugh Qualification">
           <div class="panel-header">
             <div class="panel-title-area">
-              <h2><span>📊</span> Real-Time Lead Pipeline & Pugh Qualification</h2>
+              <h2>Lead Pipeline & Pugh Matrix Qualification</h2>
               <div class="panel-subtitle">
-                Automatic intent classification against 5 baseline property buying criteria
+                Real-time evaluation against 5 baseline property buying dimensions
               </div>
             </div>
 
-            <!-- Filter Controls -->
-            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-              <div class="filter-tabs">
-                <button class="tab-btn active" data-filter="ALL" id="tabFilterAll">All Leads</button>
-                <button class="tab-btn" data-filter="GENUINE" id="tabFilterGenuine">Genuine (≥70%)</button>
-                <button class="tab-btn" data-filter="NURTURE" id="tabFilterNurture">Nurture</button>
-                <button class="tab-btn" data-filter="EXPLORER" id="tabFilterExplorer">Explorers</button>
-                <button class="tab-btn" data-filter="DISPATCHED" id="tabFilterDispatched">Sales Dispatched</button>
+            <!-- Filter Tabs & Search Controls -->
+            <div class="panel-actions-row">
+              <div class="filter-tabs" role="tablist">
+                <button class="tab-btn active" data-filter="ALL" id="tabFilterAll" role="tab">All Leads</button>
+                <button class="tab-btn" data-filter="GENUINE" id="tabFilterGenuine" role="tab">Genuine</button>
+                <button class="tab-btn" data-filter="NURTURE" id="tabFilterNurture" role="tab">Nurture</button>
+                <button class="tab-btn" data-filter="EXPLORER" id="tabFilterExplorer" role="tab">Explorers</button>
+                <button class="tab-btn" data-filter="DISPATCHED" id="tabFilterDispatched" role="tab">Dispatched</button>
               </div>
 
               <div class="search-wrapper">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" class="search-input" placeholder="Search by name, phone...">
+                <svg class="search-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="searchInput" class="search-input" placeholder="Search by name, phone, city..." aria-label="Search leads">
               </div>
             </div>
           </div>
@@ -141,12 +214,12 @@
             <table class="leads-table">
               <thead>
                 <tr>
-                  <th>Prospect / Phone</th>
+                  <th>Prospect / Contact</th>
                   <th>Pugh Match Score</th>
-                  <th>Verdict</th>
-                  <th>Detected Insights</th>
+                  <th>Classification</th>
+                  <th>Extracted Signals</th>
                   <th>Sales Handover</th>
-                  <th>Action</th>
+                  <th style="text-align: right;">Actions</th>
                 </tr>
               </thead>
               <tbody id="leadsTableBody">
@@ -156,74 +229,73 @@
           </div>
         </section>
 
-        <!-- Right: Interactive WhatsApp Phone Simulator -->
-        <aside class="simulator-panel" aria-label="Interactive WhatsApp Simulator">
-          <!-- Live Pugh Banner -->
-          <div class="sim-live-banner">
-            <div>
-              <div style="color: var(--text-secondary); font-size: 0.72rem; text-transform: uppercase;">Live Evaluated Score</div>
-              <div class="sim-live-score" id="simScoreVal" style="color: #f59e0b;">50%</div>
+        <!-- Right: Professional CRM Conversation Console (Intercom/Zendesk Style) -->
+        <aside class="crm-chat-console" aria-label="Live WhatsApp Conversation Console">
+          <!-- Console Top Header -->
+          <div class="crm-console-header">
+            <div class="crm-lead-profile">
+              <div class="crm-avatar">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+              </div>
+              <div class="crm-meta-info">
+                <div class="crm-lead-title">
+                  <span>HavenCraft Property Advisor</span>
+                  <span class="status-indicator-live" title="Bot Online"></span>
+                </div>
+                <div class="crm-lead-sub">WhatsApp Simulator • NLP Lead Qualifier</div>
+              </div>
             </div>
-            <div id="simStatusBadge" class="badge badge-nurture">
-              Awaiting Qualification
+
+            <!-- Live Score Badge Pill -->
+            <div class="crm-score-pill">
+              <span class="score-label">Score:</span>
+              <span class="score-value" id="simScoreVal">50%</span>
+              <span class="badge badge-nurture" id="simStatusBadge">Awaiting Turn</span>
             </div>
           </div>
 
-          <!-- Realistic Phone Mock -->
-          <div class="sim-phone-wrapper">
-            <div class="sim-phone-speaker"></div>
-            <div class="sim-phone-screen">
-              <!-- WhatsApp Header -->
-              <div class="wa-header">
-                <div class="wa-profile">
-                  <div class="wa-avatar">🏡</div>
-                  <div class="wa-name-info">
-                    <div class="wa-name">HavenCraft Property Advisor</div>
-                    <div class="wa-status">
-                      <span class="wa-status-dot"></span> online
-                    </div>
-                  </div>
-                </div>
-                <div style="color: #aebac1; font-size: 1.1rem; cursor: pointer;">⋮</div>
-              </div>
+          <!-- Chat Message Feed -->
+          <div class="crm-chat-body" id="simChatBody">
+            <!-- Messages populated dynamically by simulator.js -->
+          </div>
 
-              <!-- Chat Message Feed -->
-              <div class="wa-chat-body" id="simChatBody">
-                <!-- Bubbles inserted dynamically by simulator.js -->
-              </div>
-
-              <!-- Quick Action Scenario Presets -->
-              <div class="quick-scenarios" title="Click a preset to quickly test real estate buyer personas">
-                <button class="scenario-chip" data-text="1 Mumbai">
-                  🏙️ 1 Mumbai
-                </button>
-                <button class="scenario-chip" data-text="2 Pune">
-                  🌳 2 Pune
-                </button>
-                <button class="scenario-chip" data-text="3 Bangalore">
-                  💻 3 Bangalore
-                </button>
-                <button class="scenario-chip" data-text="4 Delhi NCR">
-                  🏛️ 4 Delhi / NCR
-                </button>
-              </div>
-
-              <!-- Input Bar -->
-              <div class="wa-input-bar">
-                <input 
-                  type="text" 
-                  id="simInput" 
-                  class="wa-input" 
-                  placeholder="Type a WhatsApp message..."
-                  autocomplete="off"
-                >
-                <button id="simSendBtn" class="wa-send-btn" aria-label="Send message">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
-                  </svg>
-                </button>
-              </div>
+          <!-- Quick Scenario Presets -->
+          <div class="crm-scenarios-bar">
+            <span class="scenarios-label">Quick Test Scenarios:</span>
+            <div class="scenario-chips-wrap">
+              <button class="scenario-chip" data-text="1 Mumbai" type="button">
+                <span>1 Mumbai</span>
+              </button>
+              <button class="scenario-chip" data-text="2 Pune" type="button">
+                <span>2 Pune</span>
+              </button>
+              <button class="scenario-chip" data-text="3 Bangalore" type="button">
+                <span>3 Bangalore</span>
+              </button>
+              <button class="scenario-chip" data-text="4 Delhi NCR" type="button">
+                <span>4 Delhi/NCR</span>
+              </button>
             </div>
+          </div>
+
+          <!-- Input Composer -->
+          <div class="crm-composer">
+            <input 
+              type="text" 
+              id="simInput" 
+              class="crm-composer-input" 
+              placeholder="Type simulated WhatsApp message..."
+              autocomplete="off"
+            >
+            <button id="simSendBtn" class="crm-send-btn" type="button" aria-label="Send message">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+              <span>Send</span>
+            </button>
           </div>
         </aside>
       </div>
@@ -232,9 +304,37 @@
     <!-- Native HTML5 Dialog: Pugh Matrix Scorecard Inspector -->
     <dialog id="pughModalDialog" class="pugh-dialog" aria-labelledby="dialogLeadTitle">
       <div class="dialog-header">
-        <h2 class="dialog-title" id="dialogLeadTitle">Pugh Matrix Scorecard</h2>
-        <button type="button" class="dialog-close-btn" id="dialogCloseBtn" aria-label="Close modal">✕</button>
+        <div class="dialog-header-info">
+          <h2 class="dialog-title" id="dialogLeadTitle">Pugh Matrix Scorecard</h2>
+          <p class="dialog-subtitle">Detailed 5-criteria qualification analysis against baseline datum</p>
+        </div>
+        <button type="button" class="dialog-close-btn" id="dialogCloseBtn" aria-label="Close modal">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
+
+      <!-- Sticky Tab Bar Directly Below Header (Never scrolls away) -->
+      <div class="modal-tab-bar" role="tablist">
+        <button class="modal-tab-btn active" id="modalTabCriteria" type="button" role="tab">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
+          <span>📊 5-Criteria Pugh Scorecard</span>
+        </button>
+        <button class="modal-tab-btn" id="modalTabHistory" type="button" role="tab">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span>💬 Questions & Conversation Transcript (<span id="modalMsgCount">0</span>)</span>
+        </button>
+      </div>
+
       <div class="dialog-body">
         <!-- Hero Score Area -->
         <div class="pugh-hero-card">
@@ -242,13 +342,58 @@
           <div class="pugh-hero-info" id="dialogHeroInfo"></div>
         </div>
 
-        <!-- 5 Criteria Breakdown Cards -->
-        <div>
-          <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary);">
-            📋 Multi-Criteria Evaluation vs Baseline Datum (Score: -2 to +2)
-          </h4>
-          <div class="criteria-table-wrap" id="dialogCriteriaList">
-            <!-- Populated dynamically by pugh-visualizer.js -->
+        <!-- Conversation & Question Inquiry Audit Strip -->
+        <div class="inquiry-audit-strip" id="dialogInquiryAudit">
+          <!-- Populated dynamically by pugh-visualizer.js -->
+        </div>
+
+        <!-- Panel 1: 5 Criteria Breakdown Cards & Formula -->
+        <div class="dialog-tab-panel active" id="dialogPanelCriteria">
+          <div class="dialog-criteria-section">
+            <div class="criteria-section-header">
+              <h3 class="criteria-section-title">
+                Multi-Criteria Evaluation vs Baseline Datum (Score: -2 to +2)
+              </h3>
+              <span class="criteria-calc-note" id="dialogCalcNote"></span>
+            </div>
+            <div class="criteria-table-wrap" id="dialogCriteriaList">
+              <!-- Populated dynamically by pugh-visualizer.js -->
+            </div>
+            <!-- External Questions & Neutral Scoring Policy Note -->
+            <div class="external-policy-card" id="dialogExternalPolicyCard">
+              <!-- Populated dynamically by pugh-visualizer.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 2: Full Conversation Transcript & Signal Mapping -->
+        <div class="dialog-tab-panel" id="dialogPanelHistory" style="display: none;">
+          <div class="dialog-history-section">
+            <div class="dialog-history-header">
+              <div class="history-title-row">
+                <h3 class="criteria-section-title">
+                  Dialogue Turns & External Question Log
+                </h3>
+                <div class="transcript-filter-chips" id="transcriptFilterChips">
+                  <button class="t-filter-chip active" data-tfilter="all">All Turns</button>
+                  <button class="t-filter-chip" data-tfilter="bot">🤖 Bot Questions</button>
+                  <button class="t-filter-chip" data-tfilter="user-signals">👤 Buyer Answers</button>
+                  <button class="t-filter-chip" data-tfilter="external">❓ External Questions</button>
+                </div>
+              </div>
+              <p class="history-context-note">
+                Every bot question, buyer response, and external/out-of-topic question is logged below with real-estate signal mapping and score impact.
+              </p>
+            </div>
+
+            <!-- Dedicated External Questions Callout Box -->
+            <div class="external-questions-highlight-box" id="dialogExternalQuestionsBox">
+              <!-- Populated dynamically by pugh-visualizer.js -->
+            </div>
+
+            <div class="dialog-transcript-feed" id="dialogTranscriptFeed">
+              <!-- Populated dynamically by pugh-visualizer.js -->
+            </div>
           </div>
         </div>
       </div>
@@ -258,8 +403,6 @@
     <div id="toastContainer" class="toast-container" aria-live="polite"></div>
   </div>
 
-  <script type="module" src="js/pugh-visualizer.js"></script>
-  <script type="module" src="js/simulator.js"></script>
-  <script type="module" src="js/app.js"></script>
+  <script type="module" src="/js/app.js"></script>
 </body>
 </html>

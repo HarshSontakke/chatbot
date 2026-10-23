@@ -34,182 +34,260 @@ export async function callLLM(fn, retries = 3, delayMs = 3000) {
 }
 
 /**
- * Heuristic NLP Intent Extractor (Reliable Offline / Zero-API-Key Fallback)
+ * Detects if user sent an out-of-topic or conversational question/comment
+ * Returns a polite response and category to acknowledge the user and guide them back.
+ */
+export function detectOutOfTopic(text) {
+  if (!text || typeof text !== "string") return null;
+  const lower = text.toLowerCase().trim();
+
+  // If matches city, configuration, preset buttons, greetings, or farewells, it's not out of topic
+  if (detectCity(lower)) return null;
+  if (detectConfiguration(lower)) return null;
+  if (/^(hi|hello|hey|start|good morning|namaste|greetings)/i.test(lower)) return null;
+  if (/^(thank|thanks|thankyou|thx|bye|goodbye|cya|good night|have a good day|ok thanks|okay thanks)/i.test(lower)) return null;
+  if (/^(1|2|3|4|5)$/.test(lower)) return null;
+  if (/\$?\d+[\d,]*\s*(k|m|million|thousand|cr|crore|lakh)/i.test(lower)) return null;
+  if (lower.includes("immediate") || lower.includes("ready to move") || lower.includes("30") || lower.includes("60") || lower.includes("month") || lower.includes("year")) return null;
+  if (lower.includes("goregaon") || lower.includes("borivali") || lower.includes("andheri") || lower.includes("baner") || lower.includes("wakad") || lower.includes("whitefield") || lower.includes("gurgaon") || lower.includes("noida")) return null;
+
+  // Specific Out of topic categories
+  if (/(who are you|what is your name|who made you|who created you|are you ai|are you a robot|are you human|what model|chatgpt|openai)/i.test(lower)) {
+    return {
+      category: "Bot Identity",
+      reply: "I am HavenCraft Realty's AI Property Dealer Bot! 🏡✨ My specialty is curating and evaluating luxury residential properties across Mumbai, Pune, Bangalore, and Delhi/NCR."
+    };
+  }
+
+  if (/(weather|rain|temperature|sunny|forecast|climate outside|how hot|how cold)/i.test(lower)) {
+    return {
+      category: "Weather Query",
+      reply: "I keep my eye on real estate market trends rather than weather forecasts! ☀️ But I hope you're having great weather today."
+    };
+  }
+
+  if (/(tell me a joke|make me laugh|tell a story|say something funny)/i.test(lower)) {
+    return {
+      category: "Joke / Humor",
+      reply: "Here's a quick property joke for you: Why did the house go to the doctor? ... Because it had a window pane! 😄🏠"
+    };
+  }
+
+  if (/(how are you|how's it going|what's up|sup|what are you doing|kaisa hai|kaise ho)/i.test(lower)) {
+    return {
+      category: "Casual Chit-Chat",
+      reply: "I'm doing fantastic, thank you! Excited to help you find an exceptional home. 😊"
+    };
+  }
+
+  if (/(car|bike|crypto|bitcoin|gold|food|pizza|burger|laptop|mobile|phone|shoes|clothes)/i.test(lower)) {
+    return {
+      category: "Unrelated Subject",
+      reply: "At HavenCraft Realty, we specialize exclusively in premium residential apartments, penthouses, and luxury villas! 🏡"
+    };
+  }
+
+  // Any general question ending in ? or starting with question words
+  if (lower.endsWith("?") || /^(who|what|where|when|why|how|which|can you|do you|is it|are there)\b/i.test(lower)) {
+    return {
+      category: "General Question",
+      reply: "That's an interesting question! While my core focus is guiding you through verified luxury real estate and market analysis, I'm always happy to connect."
+    };
+  }
+
+  return null;
+}
+
+/**
+ * Heuristic NLP Intent Extractor (Evaluates across the WHOLE conversation history)
  * Analyzes conversational responses across Mumbai, Pune, Bangalore, Delhi/NCR,
  * configurations, dynamic budgets, and purchase timelines.
  */
 function heuristicExtract(text, currentLeadData) {
-  const lower = text.toLowerCase();
-  const evaluations = { ...(currentLeadData.evaluations || {}) };
+  const evaluations = { ...(currentLeadData?.evaluations || {}) };
+  const history = currentLeadData?.chatHistory || [];
 
-  // 1. Budget & Financial Readiness
-  if (
-    lower.includes("pre-approved") ||
-    lower.includes("preapproved") ||
-    lower.includes("cash ready") ||
-    lower.includes("all cash") ||
-    lower.includes("mortgage approved") ||
-    lower.includes("bank sanctioned")
-  ) {
-    evaluations.budget_readiness = {
-      score: 2,
-      quote: text.slice(0, 100),
-      reasoning: "Buyer has secured pre-approval or liquid cash ready for immediate escrow."
-    };
-  } else if (
-    /\$?\d+[\d,]*\s*(k|m|million|thousand|cr|crore|lakh)/i.test(lower) ||
-    lower.includes("budget is") ||
-    lower.includes("bracket") ||
-    lower.includes("crore") ||
-    lower.includes("lakh") ||
-    lower === "1" || lower === "2" || lower === "3"
-  ) {
-    evaluations.budget_readiness = {
-      score: 1,
-      quote: text.slice(0, 100),
-      reasoning: "Clear budget bracket stated with viable financial expectation."
-    };
-  } else if (
-    lower.includes("no budget") ||
-    lower.includes("can't afford") ||
-    lower.includes("too expensive") ||
-    lower.includes("zero money") ||
-    lower.includes("broke") ||
-    lower.includes("just dreaming")
-  ) {
-    evaluations.budget_readiness = {
-      score: -2,
-      quote: text.slice(0, 100),
-      reasoning: "Explicit non-buyer signals: lack of budget or affordability."
-    };
-  }
+  // Combine all user inputs from the entire conversation + current message
+  const userMessages = [
+    ...history.filter((m) => m.role === "user").map((m) => m.content),
+    text
+  ].filter(Boolean);
 
-  // 2. Timeline & Purchase Urgency (Key Genuine Buyer Qualifier)
-  if (
-    lower.includes("immediate") ||
-    lower.includes("urgently") ||
-    lower.includes("ready to move") ||
-    lower.includes("within 30") ||
-    lower.includes("30-60") ||
-    lower.includes("this month") ||
-    lower.includes("next month") ||
-    lower === "1"
-  ) {
-    evaluations.timeline_urgency = {
-      score: 2,
-      quote: text.slice(0, 100),
-      reasoning: "High purchase urgency: immediate readiness or under 30-60 days."
-    };
-  } else if (
-    lower.includes("60 days") ||
-    lower.includes("2 months") ||
-    lower.includes("3 months") ||
-    lower.includes("3 to 6") ||
-    lower.includes("near-term") ||
-    lower === "2"
-  ) {
-    evaluations.timeline_urgency = {
-      score: 1,
-      quote: text.slice(0, 100),
-      reasoning: "Active search window within 3 to 6 months."
-    };
-  } else if (
-    lower.includes("under construction") ||
-    lower.includes("6 to 12") ||
-    lower.includes("new launch") ||
-    lower === "3"
-  ) {
-    evaluations.timeline_urgency = {
-      score: 0,
-      quote: text.slice(0, 100),
-      reasoning: "Mid-term investment or under-construction possession timeline (6 to 12 months)."
-    };
-  } else if (
-    lower.includes("just browsing") ||
-    lower.includes("just looking") ||
-    lower.includes("exploring") ||
-    lower.includes("no rush") ||
-    lower.includes("1+ year") ||
-    lower.includes("next year") ||
-    lower.includes("someday") ||
-    lower.includes("casual") ||
-    lower === "4"
-  ) {
-    evaluations.timeline_urgency = {
-      score: -2,
-      quote: text.slice(0, 100),
-      reasoning: "Casual explorer signal: prolonged indefinite timeline (>12 months)."
-    };
-  }
+  for (const msg of userMessages) {
+    const lower = msg.toLowerCase();
 
-  // 3. Requirement Specificity & Location Clarity (Mumbai, Pune, Bangalore, Delhi/NCR)
-  const isCityMentioned = 
-    lower.includes("mumbai") || lower.includes("pune") || 
-    lower.includes("bangalore") || lower.includes("bengaluru") || 
-    lower.includes("delhi") || lower.includes("ncr") || lower.includes("gurgaon") || lower.includes("noida");
+    // 1. Budget & Financial Readiness
+    if (
+      lower.includes("pre-approved") ||
+      lower.includes("preapproved") ||
+      lower.includes("cash ready") ||
+      lower.includes("all cash") ||
+      lower.includes("mortgage approved") ||
+      lower.includes("bank sanctioned")
+    ) {
+      evaluations.budget_readiness = {
+        score: 2,
+        quote: msg.slice(0, 100),
+        reasoning: "Buyer has secured pre-approval or liquid cash ready for immediate escrow."
+      };
+    } else if (
+      /\$?\d+[\d,]*\s*(k|m|million|thousand|cr|crore|lakh)/i.test(lower) ||
+      lower.includes("budget is") ||
+      lower.includes("bracket") ||
+      lower.includes("crore") ||
+      lower.includes("lakh")
+    ) {
+      if (!evaluations.budget_readiness || evaluations.budget_readiness.score < 2) {
+        evaluations.budget_readiness = {
+          score: 1,
+          quote: msg.slice(0, 100),
+          reasoning: "Clear budget bracket stated with viable financial expectation."
+        };
+      }
+    } else if (
+      lower.includes("no budget") ||
+      lower.includes("can't afford") ||
+      lower.includes("too expensive") ||
+      lower.includes("zero money") ||
+      lower.includes("broke") ||
+      lower.includes("just dreaming")
+    ) {
+      evaluations.budget_readiness = {
+        score: -2,
+        quote: msg.slice(0, 100),
+        reasoning: "Explicit non-buyer signals: lack of budget or affordability."
+      };
+    }
 
-  const isLocalityMentioned = 
-    lower.includes("goregaon") || lower.includes("borivali") || lower.includes("kandivali") || lower.includes("malad") || lower.includes("andheri") ||
-    lower.includes("baner") || lower.includes("balewadi") || lower.includes("wakad") || lower.includes("hinjewadi") || lower.includes("kharadi") || lower.includes("kothrud") ||
-    lower.includes("whitefield") || lower.includes("indiranagar") || lower.includes("koramangala") || lower.includes("hsr") || lower.includes("sarjapur") || lower.includes("electronic city") ||
-    lower.includes("gurgaon") || lower.includes("noida") || lower.includes("saket") || lower.includes("dwarka");
+    // 2. Timeline & Purchase Urgency (Key Genuine Buyer Qualifier)
+    if (
+      lower.includes("immediate") ||
+      lower.includes("urgently") ||
+      lower.includes("ready to move") ||
+      lower.includes("within 30") ||
+      lower.includes("30-60") ||
+      lower.includes("this month") ||
+      lower.includes("next month")
+    ) {
+      evaluations.timeline_urgency = {
+        score: 2,
+        quote: msg.slice(0, 100),
+        reasoning: "High purchase urgency: immediate readiness or under 30-60 days."
+      };
+    } else if (
+      lower.includes("60 days") ||
+      lower.includes("2 months") ||
+      lower.includes("3 months") ||
+      lower.includes("3 to 6") ||
+      lower.includes("near-term")
+    ) {
+      if (!evaluations.timeline_urgency || evaluations.timeline_urgency.score < 2) {
+        evaluations.timeline_urgency = {
+          score: 1,
+          quote: msg.slice(0, 100),
+          reasoning: "Active search window within 3 to 6 months."
+        };
+      }
+    } else if (
+      lower.includes("under construction") ||
+      lower.includes("6 to 12") ||
+      lower.includes("new launch")
+    ) {
+      if (!evaluations.timeline_urgency || evaluations.timeline_urgency.score < 1) {
+        evaluations.timeline_urgency = {
+          score: 0,
+          quote: msg.slice(0, 100),
+          reasoning: "Mid-term investment or under-construction possession timeline (6 to 12 months)."
+        };
+      }
+    } else if (
+      lower.includes("just browsing") ||
+      lower.includes("just looking") ||
+      lower.includes("exploring") ||
+      lower.includes("no rush") ||
+      lower.includes("1+ year") ||
+      lower.includes("next year") ||
+      lower.includes("someday") ||
+      lower.includes("casual")
+    ) {
+      evaluations.timeline_urgency = {
+        score: -2,
+        quote: msg.slice(0, 100),
+        reasoning: "Casual explorer signal: prolonged indefinite timeline (>12 months)."
+      };
+    }
 
-  const isConfigMentioned = 
-    lower.includes("bhk") || lower.includes("1rk") || lower.includes("bungalow") || 
-    lower.includes("banglow") || lower.includes("villa");
+    // 3. Requirement Specificity & Location Clarity (Mumbai, Pune, Bangalore, Delhi/NCR)
+    const isCityMentioned = 
+      lower.includes("mumbai") || lower.includes("pune") || 
+      lower.includes("bangalore") || lower.includes("bengaluru") || 
+      lower.includes("delhi") || lower.includes("ncr") || lower.includes("gurgaon") || lower.includes("noida");
 
-  if ((isCityMentioned || isLocalityMentioned) && isConfigMentioned) {
-    evaluations.requirement_clarity = {
-      score: 2,
-      quote: text.slice(0, 100),
-      reasoning: "Clear city/locality coupled with unit configuration (BHK / Bungalow)."
-    };
-  } else if (isCityMentioned || isLocalityMentioned || isConfigMentioned) {
-    evaluations.requirement_clarity = {
-      score: 1,
-      quote: text.slice(0, 100),
-      reasoning: "Specific metro city, locality, or unit configuration stated."
-    };
-  } else if (lower.includes("anything") || lower.includes("whatever") || lower.includes("anywhere")) {
-    evaluations.requirement_clarity = {
-      score: -1,
-      quote: text.slice(0, 100),
-      reasoning: "Broad non-committal parameters without geographic focus."
-    };
-  }
+    const isLocalityMentioned = 
+      lower.includes("goregaon") || lower.includes("borivali") || lower.includes("kandivali") || lower.includes("malad") || lower.includes("andheri") ||
+      lower.includes("baner") || lower.includes("balewadi") || lower.includes("wakad") || lower.includes("hinjewadi") || lower.includes("kharadi") || lower.includes("kothrud") ||
+      lower.includes("whitefield") || lower.includes("indiranagar") || lower.includes("koramangala") || lower.includes("hsr") || lower.includes("sarjapur") || lower.includes("electronic city") ||
+      lower.includes("gurgaon") || lower.includes("noida") || lower.includes("saket") || lower.includes("dwarka");
 
-  // 4. Decision Authority
-  if (
-    lower.includes("i am deciding") ||
-    lower.includes("myself and my wife") ||
-    lower.includes("my spouse and i") ||
-    lower.includes("ready to sign") ||
-    lower.includes("sole buyer") ||
-    lower.includes("for my family")
-  ) {
-    evaluations.decision_authority = {
-      score: 2,
-      quote: text.slice(0, 100),
-      reasoning: "Primary decision-maker or verified joint buyer ready to take action."
-    };
-  }
+    const isConfigMentioned = 
+      lower.includes("bhk") || lower.includes("1rk") || lower.includes("bungalow") || 
+      lower.includes("banglow") || lower.includes("villa");
 
-  // 5. Engagement Commitment
-  if (
-    lower.includes("saturday") ||
-    lower.includes("sunday") ||
-    lower.includes("weekend") ||
-    lower.includes("visit site") ||
-    lower.includes("tour") ||
-    lower.includes("walkthrough") ||
-    lower.includes("brochure") ||
-    lower.includes("yes available")
-  ) {
-    evaluations.engagement_commitment = {
-      score: 2,
-      quote: text.slice(0, 100),
-      reasoning: "Active commitment to property inspection or brochure review."
-    };
+    if ((isCityMentioned || isLocalityMentioned) && isConfigMentioned) {
+      evaluations.requirement_clarity = {
+        score: 2,
+        quote: msg.slice(0, 100),
+        reasoning: "Clear city/locality coupled with unit configuration (BHK / Bungalow)."
+      };
+    } else if (isCityMentioned || isLocalityMentioned || isConfigMentioned) {
+      if (!evaluations.requirement_clarity || evaluations.requirement_clarity.score < 2) {
+        evaluations.requirement_clarity = {
+          score: 1,
+          quote: msg.slice(0, 100),
+          reasoning: "Specific metro city, locality, or unit configuration stated."
+        };
+      }
+    } else if (lower.includes("anything") || lower.includes("whatever") || lower.includes("anywhere")) {
+      evaluations.requirement_clarity = {
+        score: -1,
+        quote: msg.slice(0, 100),
+        reasoning: "Broad non-committal parameters without geographic focus."
+      };
+    }
+
+    // 4. Decision Authority
+    if (
+      lower.includes("i am deciding") ||
+      lower.includes("myself and my wife") ||
+      lower.includes("my spouse and i") ||
+      lower.includes("ready to sign") ||
+      lower.includes("sole buyer") ||
+      lower.includes("for my family")
+    ) {
+      evaluations.decision_authority = {
+        score: 2,
+        quote: msg.slice(0, 100),
+        reasoning: "Primary decision-maker or verified joint buyer ready to take action."
+      };
+    }
+
+    // 5. Engagement Commitment
+    if (
+      lower.includes("saturday") ||
+      lower.includes("sunday") ||
+      lower.includes("weekend") ||
+      lower.includes("visit site") ||
+      lower.includes("tour") ||
+      lower.includes("walkthrough") ||
+      lower.includes("brochure") ||
+      lower.includes("yes available")
+    ) {
+      evaluations.engagement_commitment = {
+        score: 2,
+        quote: msg.slice(0, 100),
+        reasoning: "Active commitment to property inspection or brochure review."
+      };
+    }
   }
 
   return evaluations;
@@ -291,6 +369,11 @@ CURRENT STATE CONTEXT:
    If the user names an area that is NOT one of our curated 3-4 prime localities for their city, you MUST explicitly state:
    "Thank you for sharing that! We will connect you back once we have property on that particular location. 🤝"
    And then immediately ask the Stage 3 question (Unit Configuration).
+4. OUT-OF-TOPIC & CASUAL QUESTIONS:
+   If the user asks an off-topic question, makes casual banter, asks for general knowledge, weather, jokes, or unrelated topics:
+   - ALWAYS acknowledge and answer their specific question or comment politely in 1-2 friendly sentences first! Never ignore what they asked.
+   - Then smoothly bridge back to their home search and ask the question for Stage ${currentStage}.
+   - Treat off-topic banter as neutral conversational engagement without penalizing their property qualification.
 
 EXACT STAGE GUIDE (FOCUS ONLY ON STAGE ${currentStage}):
 
@@ -427,11 +510,23 @@ OUTPUT JSON SCHEMA:
     const lower = incomingMessage.toLowerCase().trim();
     const isGreeting = /^(hi|hello|hey|start|good morning|namaste|greetings)/i.test(lower) || currentTurn === 1;
     const isFarewell = /^(thank|thanks|thankyou|thx|bye|goodbye|cya|good night|have a good day|ok thanks|okay thanks|alright thanks|dhanyawad|shukriya|great thanks|ok bye)/i.test(lower);
+    const outOfTopic = detectOutOfTopic(incomingMessage);
     
     if (isFarewell) {
       replyText = `You're very welcome${senderName !== "Guest" ? ` ${senderName}` : ""}! 🙏✨ It was an absolute pleasure assisting you today.\n\n` +
         `Wishing you and your family abundant joy, peace, and great success in your home search! 🏡💫\n\n` +
         `I'm always right here on WhatsApp whenever you need any market updates, floor plans, or property advice. Have a wonderful and blessed day ahead! 🌟☕`;
+    } else if (outOfTopic) {
+      // Politely acknowledge and answer the out-of-topic query, then gently guide back
+      let guideQuestion = "";
+      if (!cityKey) {
+        guideQuestion = QUALIFICATION_QUESTIONS[0].fullPrompt;
+      } else if (!configKey) {
+        guideQuestion = QUALIFICATION_QUESTIONS[2].fullPrompt;
+      } else {
+        guideQuestion = getDynamicBudgetPrompt(configKey);
+      }
+      replyText = `${outOfTopic.reply}\n\n*Continuing with your property search:* 🤝\n${guideQuestion}`;
     } else if (isGreeting && currentTurn === 1) {
       replyText = QUALIFICATION_QUESTIONS[0].fullPrompt;
     } else if (currentTurn === 2) {

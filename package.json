@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test": "node test/pugh-matrix.test.js"
+    "test": "node test/pugh-matrix.test.js",
+    "diag": "node scripts/diag.js",
+    "sync-webhook": "node scripts/update-subscription.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
